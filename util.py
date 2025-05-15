@@ -1,4 +1,4 @@
-import datetime, calendar, requests
+import datetime, calendar, requests, logging
 
 def getUUID(username):
 	"""
@@ -15,7 +15,9 @@ def getUUID(username):
 		url = "https://api.mojang.com/users/profiles/minecraft/{0}?at={1}".format(username, timestamp)
 		data = requests.get(url).json()
 		return data["id"]
-	except:
+	except Exception as e:
+		logging.error(e)
+		logging.error(f"Error while getting uuid for {username}.")
 		return None
 
 prestiges = [

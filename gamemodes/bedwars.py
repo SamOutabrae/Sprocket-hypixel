@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, bridge
 
 import logging
 import requests
@@ -62,7 +62,7 @@ class BedwarsStats():
 
             return parseFromJSON(response.json())
         except Exception as e:
-            logging.error("Error while making request to {url}. Response code: {response.status_code}.")
+            logging.error(f"Error while making request to {url}. Response code: {response.status_code}.")
             raise e
 
     def __add__(self, other):
@@ -140,11 +140,15 @@ class Bedwars(commands.Cog):
         self.client = client
         self.key = hypixel_api_key
 
-    @commands.command()
-    async def statsBW(self, ctx, *args):
-        uuid = util.getUUID(args[0])
+    @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
+    async def statsBW(self, ctx, username):
+        if username is None:
+            await ctx.send("Please provide a username or UUID.")
+            return
+
+        uuid = util.getUUID(username)
         
         try:
-            await ctx.send(embed = BedwarsStats.get(self.key, uuid=uuid).toEmbed())
+            await ctx.respond(embed = BedwarsStats.get(self.key, uuid=uuid).toEmbed())
         except Exception as e:
-          await ctx.send("An error occurred while fetching stats. Please contact an administrator.")
+          await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")

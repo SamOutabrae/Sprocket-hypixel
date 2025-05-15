@@ -6,7 +6,6 @@ import sys, os
 import gamemodes.bedwars as bedwars
 
 
-
 def get_intents() -> discord.Intents:
     intents = discord.Intents.default()
     intents.message_content = True
