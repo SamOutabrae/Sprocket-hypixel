@@ -1,10 +1,11 @@
 import discord
 from discord.ext import commands, bridge
 
-import logging
-import requests
+import logging, requests, datetime
 
 import util 
+
+from tracking import tracking, databases
 
 from typing import Optional
 
@@ -137,9 +138,10 @@ class BedwarsStats():
 class Bedwars(commands.Cog):
   key = None
 
-  def __init__(self, client, hypixel_api_key):
+  def __init__(self, client, hypixel_api_key, dir):
     self.client = client
     self.key = hypixel_api_key
+    self.PATH = dir
 
   @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
   @util.selfArgument
@@ -154,3 +156,35 @@ class Bedwars(commands.Cog):
       await ctx.respond(embed = BedwarsStats.get(self.key, uuid=uuid).toEmbed())
     except Exception as e:
       await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")
+
+  @bridge.bridge_command(name="today_bw", aliases=["today_bedwars", "todayBW"])
+  @util.selfArgument
+  async def today_bw(self, ctx, username: Optional[str]):
+    #checks
+    if username is None:
+      await ctx.send("please provide a username or UUID")
+
+    uuid = util.getUUID(username)
+
+    if uuid is None:
+      return
+
+    if not tracking.trackContains(self.PATH, uuid):
+      await ctx.send(f"The player {username} is not being tracked.")
+      return
+    #checks
+
+
+    wkdir = self.PATH + "/data/trackedplayers/" + uuid + "/"
+
+    d_yesterday = datetime.datetime.now()
+
+    today = BedwarsStats.get(key=self.key, uuid=uuid)
+    yesterday = parseFromJSON(databases.getJSON(self.PATH, d_yesterday, uuid=uuid))
+
+    data = today-yesterday
+
+    embed = discord.Embed(title = data.displayname, description = f"{data.displayname}'s stats so far today.", color = 0x3498DB)
+    embed = data.toEmbed(embed=embed)
+
+    await ctx.send(embed = embed)

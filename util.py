@@ -1,14 +1,12 @@
-import datetime, calendar, requests, logging
-
-import discord, hypixel
-
-import datetime, calendar, requests, logging
+import discord, datetime, calendar, requests, logging
 
 from discord.ext import commands, bridge
 
 from functools import wraps
 
 from functools import wraps
+
+from tracking import databases
 
 def selfArgument(func):
   @wraps(func)
@@ -37,6 +35,11 @@ class Util(commands.Cog):
   def __init__(self, dir):
     global directory
     directory = dir
+
+  @commands.Cog.listener()
+  async def on_ready(self):
+    logging.info("Initializing databases.")
+    await databases.initialize_dbs(directory)
 
   @bridge.bridge_command()
   async def map_username(self, ctx, minecraft_username):

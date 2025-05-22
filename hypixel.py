@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 import sys, os
 
+import tracking.databases as databases
+
 import gamemodes.bedwars as bedwars
 import util
 
@@ -15,7 +17,7 @@ def get_intents() -> discord.Intents:
 
 def get_cogs(client: commands.Bot, dir: str) -> list:
   return [
-    bedwars.Bedwars(client, api_token(dir)),
+    bedwars.Bedwars(client, api_token(dir), dir),
     util.Util(dir)
   ]
 
