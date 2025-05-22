@@ -4,6 +4,7 @@ from discord.ext import commands
 import sys, os
 
 import gamemodes.bedwars as bedwars
+import util
 
 
 def get_intents() -> discord.Intents:
@@ -12,9 +13,10 @@ def get_intents() -> discord.Intents:
 
     return intents
 
-def get_cogs(client: commands.Bot, directory: str) -> list:
+def get_cogs(client: commands.Bot, dir: str) -> list:
     return [
-        bedwars.Bedwars(client, api_token(directory))
+        bedwars.Bedwars(client, api_token(dir)),
+        util.Util(dir)
     ]
 
 def api_token(directory: str) -> str:
