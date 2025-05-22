@@ -188,3 +188,37 @@ class Bedwars(commands.Cog):
     embed = data.toEmbed(embed=embed)
 
     await ctx.send(embed = embed)
+
+  @bridge.bridge_command(name="yesterday_bw", aliases=["yesterday_bedwars", "yesterdayBW"])
+  @util.selfArgument
+  async def yesterdayBW(self, ctx, username: Optional[str]):
+    #checks
+    if username is None:
+      await ctx.send("please provide a username or UUID")
+
+    uuid = util.getUUID(username)
+
+    if uuid is None:
+      return
+
+    if not tracking.trackContains(self.PATH, uuid):
+      await ctx.send(f"The player {username} is not being tracked.")
+      return
+    #checks
+
+    wkdir = self.PATH + "/dat/trackedplayers/" + uuid + "/"
+
+    d_yesterday = datetime.datetime.now()
+    d_daybefore = datetime.datetime.now() - datetime.timedelta(days=1)
+
+    yesterday = parseFromJSON(databases.getJSON(self.PATH, d_yesterday, uuid=uuid))
+    daybefore = parseFromJSON(databases.getJSON(self.PATH, d_daybefore, uuid=uuid))
+
+    data = yesterday-daybefore
+
+    date_formatted = d_yesterday.strftime("%m/%d/%y")
+
+    embed = discord.Embed(title=data.displayname, description=f"{data.displayname}'s bedwars stats on {date_formatted}", color=0x206694)
+    embed = data.toEmbed(embed=embed)
+
+    await ctx.send(embed = embed)
