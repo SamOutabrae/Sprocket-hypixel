@@ -4,12 +4,39 @@ import discord, hypixel
 
 import datetime, calendar, requests, logging
 
-import discord, hypixel
 from discord.ext import commands, bridge
 
+from functools import wraps
+
+from functools import wraps
+
+def selfArgument(func):
+  @wraps(func)
+  async def wrapped(self, ctx, *args, **kwargs):
+    # Slash command (ctx.interaction is not None)
+    if ctx.interaction:
+      if kwargs.get("username") is None:
+        uuid = get_mapped_account(ctx.author)
+        if uuid is not None:
+          kwargs["username"] = uuid
+    else:
+      # Prefix command
+      if len(args) < 1:
+        uuid = get_mapped_account(ctx.message.author)
+        if uuid is not None:
+          return await func(self, ctx, uuid)
+    
+    return await func(self, ctx, *args, **kwargs)
+
+  return wrapped
+
+
+directory = None
+
 class Util(commands.Cog):
-  def __init__(self, directory):
-    self.directory = directory
+  def __init__(self, dir):
+    global directory
+    directory = dir
 
   @bridge.bridge_command()
   async def map_username(self, ctx, minecraft_username):
@@ -18,7 +45,7 @@ class Util(commands.Cog):
     if uuid is None:
       await ctx.reply(f"There was an error getting the UUID for {minecraft_username}. Are you sure you typed it correctly?")
 
-    if map_account(self.directory, ctx.message.author, uuid):
+    if map_account(ctx.message.author, uuid):
       await ctx.reply("Successfully mapped account.")
     else:
       await ctx.reply("You already have a mapped account.") 
@@ -45,7 +72,7 @@ def getUUID(username):
     logging.error(f"Error while getting uuid for {username}.")
     return None
 	
-def get_mapped_account(directory, user: discord.User):
+def get_mapped_account(user: discord.User):
   with open(directory + "/data/mappedusernames.csv", 'r') as f:
     lines = f.readlines()
 
@@ -61,8 +88,8 @@ def get_mapped_account(directory, user: discord.User):
       return None
 
 
-def map_account(directory, user: discord.User, uuid):
-  if get_mapped_account(directory, user) is not None:
+def map_account(user: discord.User, uuid):
+  if get_mapped_account(user) is not None:
     logging.info(f"{user.global_name} has already mapped their account. Ignoring.")
     return False
 

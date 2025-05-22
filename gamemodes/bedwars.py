@@ -6,6 +6,8 @@ import requests
 
 import util 
 
+from typing import Optional
+
 def parseFromJSON(json):
     """Creates a BedwarsStats object from a JSON response from the Hypixel API."""
 
@@ -141,7 +143,8 @@ class Bedwars(commands.Cog):
         self.key = hypixel_api_key
 
     @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
-    async def statsBW(self, ctx, username):
+    @util.selfArgument
+    async def bw(self, ctx, username: Optional[str]):
         if username is None:
             await ctx.send("Please provide a username or UUID.")
             return
