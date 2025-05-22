@@ -8,23 +8,15 @@ from functools import wraps
 
 from tracking import databases
 
+
 def selfArgument(func):
   @wraps(func)
   async def wrapped(self, ctx, *args, **kwargs):
-    # Slash command (ctx.interaction is not None)
-    if ctx.interaction:
-      if kwargs.get("username") is None:
-        uuid = get_mapped_account(ctx.author)
-        if uuid is not None:
-          kwargs["username"] = uuid
-    else:
-      # Prefix command
-      if len(args) < 1:
-        uuid = get_mapped_account(ctx.message.author)
-        if uuid is not None:
-          return await func(self, ctx, uuid)
-    
-    return await func(self, ctx, *args, **kwargs)
+    uuid = get_mapped_account(ctx.author)
+
+    kwargs["username"] = uuid
+
+    return await func(self, ctx, **kwargs)
 
   return wrapped
 
