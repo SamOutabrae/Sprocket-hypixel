@@ -20,6 +20,11 @@ def selfArgument(func):
 
   return wrapped
 
+def add_bridge_commands(bot, commands: list, cog):
+  for command in commands:
+    bc = bridge.BridgeCommand(command)
+    bc.cog = cog
+    bot.add_bridge_command(bc)
 
 directory = None
 

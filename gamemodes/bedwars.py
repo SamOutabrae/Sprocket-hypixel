@@ -138,10 +138,13 @@ class BedwarsStats():
 class Bedwars(commands.Cog):
   key = None
 
-  def __init__(self, client, hypixel_api_key, dir):
+  def __init__(self, client, hypixel_api_key, dir, tracking_enabled):
     self.client = client
     self.key = hypixel_api_key
     self.PATH = dir
+
+    if tracking_enabled:
+      util.add_bridge_commands(client, [self.today_bw, self.yesterday_bw], self)
 
   @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
   @util.selfArgument
@@ -157,7 +160,8 @@ class Bedwars(commands.Cog):
     except Exception as e:
       await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")
 
-  @bridge.bridge_command(name="today_bw", aliases=["today_bedwars", "todayBW"])
+  # TRACKING COMMANDS
+
   @util.selfArgument
   async def today_bw(self, ctx, username: Optional[str]):
     #checks
@@ -189,9 +193,9 @@ class Bedwars(commands.Cog):
 
     await ctx.send(embed = embed)
 
-  @bridge.bridge_command(name="yesterday_bw", aliases=["yesterday_bedwars", "yesterdayBW"])
+  
   @util.selfArgument
-  async def yesterdayBW(self, ctx, username: Optional[str]):
+  async def yesterday_bw(self, ctx, username: Optional[str]):
     #checks
     if username is None:
       await ctx.send("please provide a username or UUID")
