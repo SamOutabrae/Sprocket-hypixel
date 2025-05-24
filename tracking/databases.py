@@ -2,9 +2,14 @@ import asyncio, os, json, logging, util
 import datetime
 import pandas as pd
 
+from config import CONFIG
+
 databases = {}
 
-def getJSON(PATH, date: datetime.datetime, uuid=None, username=None):
+
+def getJSON(date: datetime.datetime, uuid=None, username=None):
+    PATH = CONFIG.PATH
+
     real_uuid = None
     if not uuid is None:
         real_uuid = uuid

@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands, bridge
 
-import logging, requests, datetime
+from config import CONFIG
 
+import logging, requests, datetime
 import util 
 
 from tracking import tracking, databases
@@ -138,12 +139,9 @@ class BedwarsStats():
 class Bedwars(commands.Cog):
   key = None
 
-  def __init__(self, client, hypixel_api_key, dir, tracking_enabled):
+  def __init__(self, client):
     self.client = client
-    self.key = hypixel_api_key
-    self.PATH = dir
-
-    if tracking_enabled:
+    if CONFIG.TRACKING_ENABLED:
       util.add_bridge_commands(client, [self.today_bw, self.yesterday_bw], self)
 
   @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
@@ -156,7 +154,7 @@ class Bedwars(commands.Cog):
     uuid = util.getUUID(username)
     
     try:
-      await ctx.respond(embed = BedwarsStats.get(self.key, uuid=uuid).toEmbed())
+      await ctx.respond(embed = BedwarsStats.get(CONFIG.KEY, uuid=uuid).toEmbed())
     except Exception as e:
       await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")
 
@@ -173,18 +171,18 @@ class Bedwars(commands.Cog):
     if uuid is None:
       return
 
-    if not tracking.trackContains(self.PATH, uuid):
+    if not tracking.trackContains(CONFIG.PATH, uuid):
       await ctx.send(f"The player {username} is not being tracked.")
       return
     #checks
 
 
-    wkdir = self.PATH + "/data/trackedplayers/" + uuid + "/"
+    wkdir = CONFIG.PATH + "/data/trackedplayers/" + uuid + "/"
 
     d_yesterday = datetime.datetime.now()
 
-    today = BedwarsStats.get(key=self.key, uuid=uuid)
-    yesterday = parseFromJSON(databases.getJSON(self.PATH, d_yesterday, uuid=uuid))
+    today = BedwarsStats.get(key=CONFIG.KEY, uuid=uuid)
+    yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
 
     data = today-yesterday
 
@@ -205,18 +203,18 @@ class Bedwars(commands.Cog):
     if uuid is None:
       return
 
-    if not tracking.trackContains(self.PATH, uuid):
+    if not tracking.trackContains(CONFIG.PATH, uuid):
       await ctx.send(f"The player {username} is not being tracked.")
       return
     #checks
 
-    wkdir = self.PATH + "/dat/trackedplayers/" + uuid + "/"
+    wkdir = CONFIG.PATH + "/dat/trackedplayers/" + uuid + "/"
 
     d_yesterday = datetime.datetime.now()
     d_daybefore = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    yesterday = parseFromJSON(databases.getJSON(self.PATH, d_yesterday, uuid=uuid))
-    daybefore = parseFromJSON(databases.getJSON(self.PATH, d_daybefore, uuid=uuid))
+    yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
+    daybefore = parseFromJSON(databases.getJSON(CONFIG.PATH, d_daybefore, uuid=uuid))
 
     data = yesterday-daybefore
 
