@@ -8,6 +8,8 @@ import tracking.databases as databases
 
 import gamemodes.bedwars as bedwars
 
+import gamemodes.duels as duels
+
 
 def get_tracking_enabled(dir) -> bool:
   return False
@@ -27,6 +29,7 @@ def get_cogs(client: commands.Bot, dir: str) -> list:
   return [
     bedwars.Bedwars(client),
     util.Util(dir),
+    duels.Duels()
   ]
 
 def api_token(directory: str) -> str:
