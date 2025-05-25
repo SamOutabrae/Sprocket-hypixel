@@ -96,12 +96,12 @@ If your username is mapped and you want to see your own stats, you don't need to
 ### `/yesterday_bw [username]`
 *Requires tracking*
 
-Displays Bedwars stats for any tracked player*from yesterday*. This also requires tracking to be enabled.  
+Displays Bedwars stats for any tracked player *from yesterday*. This also requires tracking to be enabled.  
 Again, the `username` argument is optional if you've used `/map_username`.
 
 ---
 
-### `/duels [username] [start_date] [end_date]`
+### `/duels [username] [startDate] [endDate]`
 
 Returns your UHC Duels stats. This command supports optional arguments:
 

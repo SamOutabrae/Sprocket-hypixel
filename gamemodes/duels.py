@@ -20,8 +20,9 @@ class Duels(commands.Cog):
     pass
 
   @bridge.bridge_command(name="duels")
+  @bridge.bridge_option("duelmode", description="The duel mode you want to get stats for.", choices = ["bridge", "uhc"])
   @util.selfArgument
-  async def duels(self, ctx, duelmode: str, start_date: Optional[str]=None, end_date: Optional[str]=None, username: Optional[str]=None):
+  async def duels(self, ctx, duelmode: str, start: Optional[str]=None, end: Optional[str]=None, username: Optional[str]=None):
     uuid = util.getUUID(username)
 
     if uuid is None:
@@ -30,16 +31,16 @@ class Duels(commands.Cog):
     duelmode = duelmode.lower()
 
     if CONFIG.TRACKING_ENABLED:
-      if start_date is not None:
-        start_date = parser.parse(start_date)
-      if end_date is not None:
-        end_date = parser.parse(end_date)
+      if start is not None:
+        start = parser.parse(start)
+      if end is not None:
+        end = parser.parse(end)
     else:
-      if start_date is not None or end_date is not None:
+      if start is not None or end is not None:
         await ctx.respond("Tracking is not enabled. Ignoring date arguments.")
 
-      start_date = None
-      end_date = None
+      start = None
+      end = None
 
 
     # TODO make this nicer
@@ -48,7 +49,10 @@ class Duels(commands.Cog):
 
     embed = None
     try:
-      embed = duelmodes[duelmode](uuid, start_date, end_date)
+      embed = duelmodes[duelmode](uuid, start, end)
+      if embed is None:
+        await ctx.respond(f"Data out of range. Please ensure you request a date range for which data exists.")
+        return
     except Exception as e:
       logging.error(e)
       await ctx.respond(f"Error while getting stats.")

@@ -164,7 +164,7 @@ class Bedwars(commands.Cog):
   async def today_bw(self, ctx, username: Optional[str]):
     #checks
     if username is None:
-      await ctx.send("please provide a username or UUID")
+      await ctx.send("Please provide a valid username.")
 
     uuid = util.getUUID(username)
 
@@ -183,6 +183,9 @@ class Bedwars(commands.Cog):
 
     today = BedwarsStats.get(key=CONFIG.KEY, uuid=uuid)
     yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
+
+    if yesterday is None:
+      await ctx.send(f"No tracking data for {username} yesterday.")
 
     data = today-yesterday
 
@@ -215,6 +218,9 @@ class Bedwars(commands.Cog):
 
     yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
     daybefore = parseFromJSON(databases.getJSON(CONFIG.PATH, d_daybefore, uuid=uuid))
+
+    if yesterday is None or daybefore is None:
+      await ctx.respond(f"Unable to get data. Ensure the player has been tracked for at least 2 days.")
 
     data = yesterday-daybefore
 

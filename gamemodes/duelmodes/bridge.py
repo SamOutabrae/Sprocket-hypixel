@@ -223,6 +223,8 @@ def getBridgeStatsEmbed(uuid, start_date, end_date):
   elif end_date is None:
     #specific date
     date = getJSON(start_date, uuid=uuid)
+    if date is None:
+      return None
     stats = BridgeStats.from_json(date)
 
     return stats.toDateEmbed(start_date)
@@ -230,6 +232,9 @@ def getBridgeStatsEmbed(uuid, start_date, end_date):
     #date_range
     start_json = getJSON(start_date, uuid=uuid)
     end_json = getJSON(end_date, uuid=uuid)
+
+    if start_json is None or end_json is None:
+      return None
 
     start_stats = BridgeStats.from_json(start_json)
     end_stats = BridgeStats.from_json(end_json)

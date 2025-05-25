@@ -22,10 +22,13 @@ def getJSON(date: datetime.datetime, uuid=None, username=None):
     
     wkdir = PATH + "/data/trackedplayers/" + uuid + "/"
     date = date.strftime("%d-%m-%y")
-
+    filepath = wkdir + date + ".json"
+    if not os.path.exists(filepath):
+        logging.error(f"Json file {filepath} does not exist.")
+        return None
 
     jsonstring = ""
-    with open(wkdir + date + ".json", "r") as f:
+    with open(filepath, "r") as f:
         jsonstring = "".join(f.readlines())
 
     jsonfile = json.loads(jsonstring)
