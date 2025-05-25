@@ -12,9 +12,10 @@ from tracking import databases
 def selfArgument(func):
   @wraps(func)
   async def wrapped(self, ctx, *args, **kwargs):
-    uuid = get_mapped_account(ctx.author)
+    if kwargs["username"] is None:
+      uuid = get_mapped_account(ctx.author)
 
-    kwargs["username"] = uuid
+      kwargs["username"] = uuid
 
     return await func(self, ctx, **kwargs)
 
@@ -148,23 +149,25 @@ prestiges = [
     ]
 
 def winsToPrestige(wins):
-	for idx, prestige in enumerate(prestiges):
-		winsNeeded = prestige[1]
-		prestige = prestige[0]
+  """Returns a tuple of the prestige and the number of wins needed to reach it."""
+  for idx, prestige in enumerate(prestiges):
+    winsNeeded = prestige[1]
+    prestige = prestige[0]
 
-		if winsNeeded > wins:
-			return (prestige, winsNeeded-wins)
+    if winsNeeded > wins:
+      return (prestige, winsNeeded-wins)
 
 def getPrestige(wins):
-	last = "N/A"
+  """Returns the prestige of a player based on their wins."""
+  last = "N/A"
 
-	for prestige, winsNeeded in prestiges:
-		if wins < winsNeeded:
-			break
+  for prestige, winsNeeded in prestiges:
+    if wins < winsNeeded:
+      break
 
-			last = prestige
+    last = prestige
 
-	return last
+  return last
 
 
 prestiges = [
@@ -214,23 +217,3 @@ prestiges = [
         ("Godlike 9", 26000),
         ("Godlike 10", 28000)
     ]
-
-def winsToPrestige(wins):
-	for idx, prestige in enumerate(prestiges):
-		winsNeeded = prestige[1]
-		prestige = prestige[0]
-
-		if winsNeeded > wins:
-			return (prestige, winsNeeded-wins)
-
-def getPrestige(wins):
-	last = "N/A"
-
-	for prestige, winsNeeded in prestiges:
-		if wins < winsNeeded:
-			break
-
-			last = prestige
-
-	return last
-
