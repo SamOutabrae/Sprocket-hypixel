@@ -18,7 +18,8 @@ Before you begin, make sure you have the following:
    Clone this repository into the `modules/` directory of your Sprocket installation.
 
 2. **Set Up Your API Key**  
-   Inside the `sprocket-hypixel` directory, create a file named `hypixel_token.txt` and paste your Hypixel API key into it. The file should contain only the key, with no extra spaces or newlines.
+   Inside the `sprocket-hypixel` directory, duplicate the file `config.toml.default`, renaming it to `config.toml`.
+   Change the `api_key` to your Hypixel API key.
 
 3. **Update `modules.toml`**  
    Add the following section to your `modules.toml` file:
@@ -39,7 +40,7 @@ sprocket-root/
 └── modules/
     └── sprocket-hypixel/
         ├── hypixel.py
-        ├── hypixel_token.txt
+        ├── config.toml
         └── (other sprocket-hypixel files)
 ```
 
@@ -60,7 +61,7 @@ in the terminal without any errors. You're ready to use the Hypixel module!
 To enable tracking:
 
 1. Schedule `gamemodes/tracking/updater.py` to run once per day using a task scheduler like `cron` (Linux) or Task Scheduler (Windows).
-2. Open `config.toml` in the root directory of the project and set the `tracking` option to `true`.
+2. Open `config.toml` and set the `tracking` option to `true`.
 
 Tracking is disabled by default, so make sure you configure both steps to begin collecting historical data.
 

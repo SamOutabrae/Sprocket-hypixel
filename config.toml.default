@@ -1,0 +1,11 @@
+# config.toml
+
+# === General Settings ===
+
+# Set to true to enable stat tracking over time
+# Make sure to set `gamemodes/tracking/updater.py` to run daily for this to work properly
+tracking = false
+
+# Your Hypixel API key.
+# You can get one at developer.hypixel.net
+api_key = "your-api-key-here"
