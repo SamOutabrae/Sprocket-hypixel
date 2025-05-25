@@ -45,7 +45,7 @@ class Duels(commands.Cog):
 
     # TODO make this nicer
     if duelmode not in duelmodes:
-      await ctx.respond(f"No duelmode {duelmode}. Please ensure you enter a proper duelmode. Options are {" ".join(duelmodes.keys())}")
+      await ctx.respond(f"No duelmode {duelmode}. Please ensure you enter a proper duelmode. Options are {' '.join(duelmodes.keys())}")
 
     embed = None
     try:
