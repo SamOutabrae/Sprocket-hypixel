@@ -10,30 +10,47 @@ databases = {}
 def getJSON(date: datetime.datetime, uuid=None, username=None):
     PATH = CONFIG.PATH
 
-    real_uuid = None
-    if not uuid is None:
+    # Determine UUID
+    if uuid is not None:
         real_uuid = uuid
-    elif not username is None:
-        realuuid = util.getUUID(username)
-        if realuuid == 1:
+    elif username is not None:
+        real_uuid = util.getUUID(username)
+        if real_uuid == 1:
             return None
     else:
         return None
-    
-    wkdir = PATH + "/data/trackedplayers/" + uuid + "/"
-    date = date.strftime("%d-%m-%y")
-    filepath = wkdir + date + ".json"
+
+    wkdir = os.path.join(PATH, "data", "trackedplayers", real_uuid)
+    date_str = date.strftime("%d-%m-%y")
+    filepath = os.path.join(wkdir, f"{date_str}.json")
+
+    # If exact file doesn't exist, try mapping.json
     if not os.path.exists(filepath):
-        logging.error(f"Json file {filepath} does not exist.")
-        return None
+        mapping_path = os.path.join(wkdir, "mapping.json")
+        if not os.path.exists(mapping_path):
+            logging.error(f"Mapping file not found: {mapping_path}")
+            return None
 
-    jsonstring = ""
+        with open(mapping_path, "r") as f:
+            mapping = json.load(f)
+
+        if date_str not in mapping:
+            logging.error(f"No mapping for date {date_str}")
+            return None
+
+        mapped_date = mapping[date_str]
+        if mapped_date is None:
+            logging.error(f"No valid fallback for date {date_str}")
+            return None
+
+        filepath = os.path.join(wkdir, f"{mapped_date}.json")
+        if not os.path.exists(filepath):
+            logging.error(f"Mapped file {filepath} does not exist.")
+            return None
+
+    # Load and return JSON
     with open(filepath, "r") as f:
-        jsonstring = "".join(f.readlines())
-
-    jsonfile = json.loads(jsonstring)
-
-    return jsonfile
+        return json.load(f)
 
 def normalizeJSON(json):
   kills = json["player"]["stats"]["Bedwars"]["kills_bedwars"]
