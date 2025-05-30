@@ -137,18 +137,16 @@ class BedwarsStats():
     return embed
 
 class Bedwars(commands.Cog):
-  key = None
 
   def __init__(self, client):
     self.client = client
-    if CONFIG.TRACKING_ENABLED:
-      util.add_bridge_commands(client, [self.today_bw, self.yesterday_bw], self)
+    
 
   @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
   @util.selfArgument
-  async def bw(self, ctx, username: Optional[str]):
+  async def bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player you want to see stats for.") = None):
     if username is None:
-      await ctx.send("Please provide a username or UUID.")
+      await ctx.respond("Please provide a username or UUID.")
       return
 
     uuid = util.getUUID(username)
@@ -159,12 +157,13 @@ class Bedwars(commands.Cog):
       await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")
 
   # TRACKING COMMANDS
-
+  @bridge.bridge_command(name="today_bw", aliases=["todayBW"])
+  @util.trackingRequired
   @util.selfArgument
-  async def today_bw(self, ctx, username: Optional[str]):
+  async def today_bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player who's stats you want to see.") = None):
     #checks
     if username is None:
-      await ctx.send("Please provide a valid username.")
+      await ctx.respond("Please provide a valid username.")
 
     uuid = util.getUUID(username)
 
@@ -172,7 +171,7 @@ class Bedwars(commands.Cog):
       return
 
     if not tracking.trackContains(CONFIG.PATH, uuid):
-      await ctx.send(f"The player {username} is not being tracked.")
+      await ctx.respond(f"The player {username} is not being tracked.")
       return
     #checks
 
@@ -182,24 +181,25 @@ class Bedwars(commands.Cog):
     d_yesterday = datetime.datetime.now()
 
     today = BedwarsStats.get(key=CONFIG.KEY, uuid=uuid)
-    yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
+    yesterday = parseFromJSON(databases.getJSON(d_yesterday, uuid=uuid))
 
     if yesterday is None:
-      await ctx.send(f"No tracking data for {username} yesterday.")
+      await ctx.respond(f"No tracking data for {username} yesterday.")
 
     data = today-yesterday
 
     embed = discord.Embed(title = data.displayname, description = f"{data.displayname}'s stats so far today.", color = 0x3498DB)
     embed = data.toEmbed(embed=embed)
 
-    await ctx.send(embed = embed)
+    await ctx.respond(embed = embed)
 
-  
+  @bridge.bridge_command(name="yesterday_bw", aliases=["yesterdayBW"])
+  @util.trackingRequired
   @util.selfArgument
-  async def yesterday_bw(self, ctx, username: Optional[str]):
+  async def yesterday_bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player who's stats you want to see.") = None): # type: ignore
     #checks
     if username is None:
-      await ctx.send("please provide a username or UUID")
+      await ctx.respond("please provide a username or UUID")
 
     uuid = util.getUUID(username)
 
@@ -207,7 +207,7 @@ class Bedwars(commands.Cog):
       return
 
     if not tracking.trackContains(CONFIG.PATH, uuid):
-      await ctx.send(f"The player {username} is not being tracked.")
+      await ctx.respond(f"The player {username} is not being tracked.")
       return
     #checks
 
@@ -216,8 +216,8 @@ class Bedwars(commands.Cog):
     d_yesterday = datetime.datetime.now()
     d_daybefore = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    yesterday = parseFromJSON(databases.getJSON(CONFIG.PATH, d_yesterday, uuid=uuid))
-    daybefore = parseFromJSON(databases.getJSON(CONFIG.PATH, d_daybefore, uuid=uuid))
+    yesterday = parseFromJSON(databases.getJSON(d_yesterday, uuid=uuid))
+    daybefore = parseFromJSON(databases.getJSON(d_daybefore, uuid=uuid))
 
     if yesterday is None or daybefore is None:
       await ctx.respond(f"Unable to get data. Ensure the player has been tracked for at least 2 days.")
@@ -229,4 +229,4 @@ class Bedwars(commands.Cog):
     embed = discord.Embed(title=data.displayname, description=f"{data.displayname}'s bedwars stats on {date_formatted}", color=0x206694)
     embed = data.toEmbed(embed=embed)
 
-    await ctx.send(embed = embed)
+    await ctx.respond(embed = embed)

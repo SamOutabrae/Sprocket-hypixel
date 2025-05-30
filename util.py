@@ -8,6 +8,8 @@ from functools import wraps
 
 from tracking import databases
 
+from config import CONFIG
+
 
 def selfArgument(func):
   @wraps(func)
@@ -21,11 +23,19 @@ def selfArgument(func):
 
   return wrapped
 
-def add_bridge_commands(bot, commands: list, cog):
-  for command in commands:
-    bc = bridge.BridgeCommand(command)
-    bc.cog = cog
-    bot.add_bridge_command(bc)
+async def fail_tracking_required(self, ctx, *args, **kwargs):
+  await ctx.respond("Tracking must be enabled to use this command.")
+  return
+
+def trackingRequired(func):
+  @wraps(func)
+  async def wrapped(self, ctx, *args, **kwargs):
+    if not getattr(CONFIG, "TRACKING_ENABLED", False):  # safer than direct access
+      return await fail_tracking_required(self, ctx, *args, **kwargs)
+    return await func(self, ctx, *args, **kwargs)
+  
+  return wrapped
+      
 
 directory = None
 
@@ -149,7 +159,7 @@ prestiges = [
     ]
 
 def winsToPrestige(wins):
-  """Returns a tuple of the prestige and the number of wins needed to reach it."""
+  """Returns a tuple of prestige and the number of wins needed to reach it."""
   for idx, prestige in enumerate(prestiges):
     winsNeeded = prestige[1]
     prestige = prestige[0]
