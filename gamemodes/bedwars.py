@@ -5,6 +5,7 @@ from config import CONFIG
 
 import logging, requests, datetime
 import util 
+from dateutil import parser
 
 from tracking import tracking, databases
 
@@ -132,10 +133,19 @@ class BedwarsStats():
     for key in d.keys():
       value = d[key]
       embed.add_field(name = key, value = value, inline = False)
-
-    embed.from_dict(self.toEmbedDict())
     return embed
+  
+  def toDateEmbed(self, date: datetime.datetime, embed: discord.Embed = None):
+    if embed is None:
+      embed = discord.Embed(title = self.displayname, description = f"Bedwars progress for {self.displayname} on {date.strftime("%m/%d/%y")}")
 
+    d = self.toEmbedDict()
+    for key in d.keys():
+      value = d[key]
+      embed.add_field(name = key, value = value, inline = False)
+
+    return embed
+    
 class Bedwars(commands.Cog):
 
   def __init__(self, client):
@@ -144,13 +154,27 @@ class Bedwars(commands.Cog):
 
   @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
   @util.selfArgument
-  async def bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player you want to see stats for.") = None):
+  async def bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player you want to see stats for.") = None, date: bridge.BridgeOption(str, description="Get stats for a specific date. Requires tracking.") = None):
     if username is None:
       await ctx.respond("Please provide a username or UUID.")
       return
-
     uuid = util.getUUID(username)
     
+    if date is not None:
+      if not CONFIG.TRACKING_ENABLED:
+        await ctx.respond("Tracking is not enabled.")
+        return
+
+      date = parser.parse(date)
+
+      stats_day = parseFromJSON(databases.getJSON(date, uuid=uuid))
+      stats_yesterday = parseFromJSON(databases.getJSON(date - datetime.timedelta(days=1), uuid=uuid))
+      stats = stats_day - stats_yesterday
+
+      await ctx.respond(embed=stats.toDateEmbed(date))
+      return
+
+
     try:
       await ctx.respond(embed = BedwarsStats.get(CONFIG.KEY, uuid=uuid).toEmbed())
     except Exception as e:
