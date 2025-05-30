@@ -1,7 +1,8 @@
 from discord.ext import commands, bridge
+import discord
 import util
 import logging
-from config import CONFIG
+from config import CONFIG, both_in, guild_in
 from typing import Optional
 
 from dateutil import parser
@@ -19,10 +20,12 @@ class Duels(commands.Cog):
   def __init__(self):
     pass
 
-  @bridge.bridge_command(name="duels")
-  @bridge.bridge_option("duelmode", description="The duel mode you want to get stats for.", choices = ["bridge", "uhc"])
+  @bridge.bridge_command(name="duels", integration_types = both_in if CONFIG.ALLOW_USER_INSTALLS else guild_in)
   @util.selfArgument
-  async def duels(self, ctx, duelmode: str, start: Optional[str]=None, end: Optional[str]=None, username: Optional[str]=None):
+  async def duels(self, ctx, duelmode: bridge.BridgeOption(str, choices=["bridge", "uhc"]), 
+                  start: bridge.BridgeOption(str, description="The start date for a range. You can also leave end_blank to just get stats for this day.")=None, 
+                  end: bridge.BridgeOption(str, description="The end date for a range. Can be left blank even if start_date is given.")=None, 
+                  username: bridge.BridgeOption(str, description="The username of the person you want to see stats for.")=None):
     uuid = util.getUUID(username)
 
     if uuid is None:

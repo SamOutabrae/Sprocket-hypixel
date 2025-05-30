@@ -9,3 +9,7 @@ tracking = false
 # Your Hypixel API key.
 # You can get one at developer.hypixel.net
 api_key = "your-api-key-here"
+
+# Set to true to allow users to run commands anywhere
+# Make sure user install in enabled in the discord developer portal
+allow_user_installs = false

@@ -65,6 +65,17 @@ To enable tracking:
 
 Tracking is disabled by default, so make sure you configure both steps to begin collecting historical data.
 
+## Allowing Discord User Installation
+
+`sprocket-hypixel` can also be used as a personal app, allowing users to access commands globally—including in DMs and across servers they have access to.
+
+To enable this:
+1.	In the Discord Developer Portal, go to your application.
+2.	Under Installation, enable User Install.
+3.	Create an install link using the provided tool on the page.
+
+Once installed, users can invoke commands anywhere, just like native Discord apps.
+
 ## Commands
 
 `sprocket-hypixel` provides several commands for viewing your Hypixel stats directly in Discord. Below is a breakdown of each command and what it does:

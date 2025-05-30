@@ -1,14 +1,9 @@
 import discord
 from discord.ext import commands
-import sys, os, util, toml, requests, logging, time
+import sys, os, toml, requests, logging, time
 
 from config import CONFIG
 
-import tracking.databases as databases
-
-import gamemodes.bedwars as bedwars
-
-import gamemodes.duels as duels
 
 
 def initialize_config(dir):
@@ -53,11 +48,14 @@ def get_intents() -> discord.Intents:
   return intents
 
 def get_cogs(client: commands.Bot, dir: str) -> list:
+  import gamemodes.bedwars as bedwars
+  import gamemodes.duels as duels
+  from util import Util
   initialize_config(dir)
 
   return [
     bedwars.Bedwars(client),
-    util.Util(dir),
+    Util(dir),
     duels.Duels()
   ]
 

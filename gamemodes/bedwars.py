@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands, bridge
-
-from config import CONFIG
+from config import CONFIG, both_in, guild_in
 
 import logging, requests, datetime
 import util 
@@ -152,7 +151,7 @@ class Bedwars(commands.Cog):
     self.client = client
     
 
-  @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"])
+  @bridge.bridge_command(name="bw", aliases=["bedwars", "bwstats", "statsBW"], integration_types = both_in if CONFIG.ALLOW_USER_INSTALLS else guild_in)
   @util.selfArgument
   async def bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player you want to see stats for.") = None, date: bridge.BridgeOption(str, description="Get stats for a specific date. Requires tracking.") = None):
     if username is None:
@@ -181,7 +180,7 @@ class Bedwars(commands.Cog):
       await ctx.respond(f"Error while getting stats. Are you sure `{username}` is correct?")
 
   # TRACKING COMMANDS
-  @bridge.bridge_command(name="today_bw", aliases=["todayBW"])
+  @bridge.bridge_command(name="today_bw", aliases=["todayBW"], integration_types = both_in if CONFIG.ALLOW_USER_INSTALLS else guild_in)
   @util.trackingRequired
   @util.selfArgument
   async def today_bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player who's stats you want to see.") = None):
@@ -217,13 +216,13 @@ class Bedwars(commands.Cog):
 
     await ctx.respond(embed = embed)
 
-  @bridge.bridge_command(name="yesterday_bw", aliases=["yesterdayBW"])
+  @bridge.bridge_command(name="yesterday_bw", aliases=["yesterdayBW"], integration_types = both_in if CONFIG.ALLOW_USER_INSTALLS else guild_in)
   @util.trackingRequired
   @util.selfArgument
   async def yesterday_bw(self, ctx, username: bridge.BridgeOption(str, description="The username of the player who's stats you want to see.") = None): # type: ignore
     #checks
     if username is None:
-      await ctx.respond("please provide a username or UUID")
+      await ctx.respond("please provide a username or UsUID")
 
     uuid = util.getUUID(username)
 

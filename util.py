@@ -8,7 +8,7 @@ from functools import wraps
 
 from tracking import databases
 
-from config import CONFIG
+from config import CONFIG, both_in, guild_in
 
 
 def selfArgument(func):
@@ -49,7 +49,7 @@ class Util(commands.Cog):
     logging.info("Initializing databases.")
     await databases.initialize_dbs(directory)
 
-  @bridge.bridge_command()
+  @commands.slash_command(integration_types = both_in if CONFIG.ALLOW_USER_INSTALLS else guild_in)
   async def map_username(self, ctx, minecraft_username):
     uuid = getUUID(minecraft_username)
 
