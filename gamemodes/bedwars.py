@@ -136,7 +136,7 @@ class BedwarsStats():
   
   def toDateEmbed(self, date: datetime.datetime, embed: discord.Embed = None):
     if embed is None:
-      embed = discord.Embed(title = self.displayname, description = f"Bedwars progress for {self.displayname} on {date.strftime("%m/%d/%y")}")
+      embed = discord.Embed(title = self.displayname, description = f"Bedwars progress for {self.displayname} on {date.strftime('%m/%d/%y')}")
 
     d = self.toEmbedDict()
     for key in d.keys():
