@@ -6,9 +6,9 @@ from functools import wraps
 
 from functools import wraps
 
-from tracking import databases
+from .tracking import databases
 
-from config import CONFIG, both_in, guild_in
+from .config import CONFIG, both_in, guild_in
 
 
 def selfArgument(func):

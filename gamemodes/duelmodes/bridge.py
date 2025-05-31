@@ -1,10 +1,10 @@
-import discord, requests, util
-from util import getPrestige, winsToPrestige
-from tracking.databases import getJSON
+import discord, requests
+from ...util import getPrestige, winsToPrestige
+from ...tracking.databases import getJSON
 from dataclasses import dataclass
 from typing import Union
 
-from config import CONFIG
+from ...config import CONFIG
 
 @dataclass
 class BridgeStats():

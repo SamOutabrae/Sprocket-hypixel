@@ -1,15 +1,15 @@
 from discord.ext import commands, bridge
 import discord
-import util
+from .. import util
 import logging
-from config import CONFIG, both_in, guild_in
+from ..config import CONFIG, both_in, guild_in
 from typing import Optional
 
 from dateutil import parser
 
 
-from gamemodes.duelmodes.bridge import getBridgeStatsEmbed
-from gamemodes.duelmodes.uhc import getUHCStatsEmbed
+from .duelmodes.bridge import getBridgeStatsEmbed
+from .duelmodes.uhc import getUHCStatsEmbed
 
 duelmodes = {
   "bridge": getBridgeStatsEmbed,

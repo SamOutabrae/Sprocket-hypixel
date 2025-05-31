@@ -1,8 +1,9 @@
-import asyncio, os, json, logging, util
+import asyncio, os, json, logging
 import datetime
 import pandas as pd
 
-from config import CONFIG
+from ..config import CONFIG
+from .. import util
 
 databases = {}
 

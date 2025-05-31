@@ -1,12 +1,12 @@
 import discord, requests
 
-from util import getPrestige, winsToPrestige
+from ...util import getPrestige, winsToPrestige
 
 from dataclasses import dataclass
 
-from tracking.databases import getJSON
+from ...tracking.databases import getJSON
 
-from config import CONFIG
+from ...config import CONFIG
 from typing import Optional 
 
 @dataclass

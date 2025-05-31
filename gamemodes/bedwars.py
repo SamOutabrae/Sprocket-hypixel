@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands, bridge
-from config import CONFIG, both_in, guild_in
+from ..config import CONFIG, both_in, guild_in
 
 import logging, requests, datetime
-import util 
+from .. import util 
 from dateutil import parser
 
-from tracking import tracking, databases
+from ..tracking import tracking, databases
 
 from typing import Optional
 

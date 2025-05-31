@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import sys, os, toml, requests, logging, time
 
-from config import CONFIG
+from .config import CONFIG
 
 
 
@@ -48,15 +48,15 @@ def get_intents() -> discord.Intents:
   return intents
 
 def get_cogs(client: commands.Bot, dir: str) -> list:
-  import gamemodes.bedwars as bedwars
-  import gamemodes.duels as duels
-  from util import Util
+  from .gamemodes.bedwars import Bedwars
+  from .gamemodes.duels import Duels
+  from .util import Util
   initialize_config(dir)
 
   return [
-    bedwars.Bedwars(client),
+    Bedwars(client),
     Util(dir),
-    duels.Duels()
+    Duels()
   ]
 
 def api_token(directory: str) -> str:
