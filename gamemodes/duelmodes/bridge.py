@@ -31,37 +31,49 @@ class BridgeStats():
       wins = (
         player_stats.get("bridge_duel_wins", 0) +
         player_stats.get("bridge_doubles_wins", 0) +
-        player_stats.get("bridge_four_wins", 0)
+        player_stats.get("bridge_threes_wins", 0) +
+        player_stats.get("bridge_four_wins", 0) +
+        player_stats.get("bridge_3v3v3v3_wins", 0)
       )
 
       losses = (
         player_stats.get("bridge_duel_losses", 0) +
         player_stats.get("bridge_doubles_losses", 0) +
-        player_stats.get("bridge_four_losses", 0)
+        player_stats.get("bridge_threes_losses", 0) +
+        player_stats.get("bridge_four_losses", 0) +
+        player_stats.get("bridge_3v3v3v3_losses")
       )
 
       kills = (
         player_stats.get("bridge_duel_bridge_kills", 0) +
         player_stats.get("bridge_doubles_bridge_kills", 0) +
-        player_stats.get("bridge_four_bridge_kills", 0)
+        player_stats.get("bridge_threes_bridge_kills", 0) +
+        player_stats.get("bridge_four_bridge_kills", 0) +
+        player_stats.get("bridge_3v3v3v3", 0)
       )
 
       deaths = (
         player_stats.get("bridge_duel_bridge_deaths", 0) +
         player_stats.get("bridge_doubles_bridge_deaths", 0) +
-        player_stats.get("bridge_four_bridge_deaths", 0)
+        player_stats.get("bridge_threes_bridge_deahts", 0) +
+        player_stats.get("bridge_four_bridge_deaths", 0) +
+        player_stats.get("bridge_3v3v3v3_bridge_deaths", 0)
       )
 
       goals = (
         player_stats.get("bridge_duel_goals", 0) +
         player_stats.get("bridge_doubles_goals", 0) +
-        player_stats.get("bridge_four_goals", 0)
+        player_stats.get("bridge_threes_goals", 0) +
+        player_stats.get("bridge_four_goals", 0) +
+        player_stats.get("bridge_3v3v3v3_goals", 0)
       )
 
       blocksPlaced = (
         player_stats.get("bridge_duel_blocks_placed", 0) +
         player_stats.get("bridge_doubles_blocks_placed", 0) +
-        player_stats.get("bridge_four_blocks_placed", 0)
+        player_stats.get("bridge_threes_blocks_placed", 0) +
+        player_stats.get("bridge_four_blocks_placed", 0) +
+        player_stats.get("bridge_3v3v3v3_blocks_placed", 0)
       )
 
       gamesPlayed = wins + losses
