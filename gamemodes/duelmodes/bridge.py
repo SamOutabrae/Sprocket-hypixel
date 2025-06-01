@@ -1,8 +1,9 @@
-import discord, requests
+import discord, requests, datetime
 from ...util import getPrestige, winsToPrestige
 from ...tracking.databases import getJSON
 from dataclasses import dataclass
 from typing import Union
+import logging
 
 from ...config import CONFIG
 
@@ -140,9 +141,9 @@ class BridgeStats():
     blocksPlaced = self.blocksPlaced - other.blocksPlaced
     gamesPlayed = wins + losses
 
-    prestige = getPrestige(wins)
-    next_prestige, wins_needed = winsToPrestige(wins)
-
+    prestige = getPrestige(self.wins)
+    next_prestige, wins_needed = winsToPrestige(max(self.wins, other.wins))
+  
     return BridgeStats(
         username=self.username,
         wins=wins,
@@ -188,11 +189,10 @@ class BridgeStats():
 
     fields = {
     "Prestige": self.prestige,
-    "Next Prestige": f"{self.winsToPrestige} more wins for {self.nextPrestige}",
     "Highest Winstreak": self.highestWinstreak,
     "Current Winstreak": self.winstreak,
     "Games Played": self.gamesPlayed,
-    "Win Rate": f"{round((self.wins*100)/(self.wins+self.losses))}%",
+    "Win Rate": f"{round((self.wins*100)/(self.wins+self.losses))}%" if self.wins + self.losses != 0 else 0,
     "Wins": self.wins,
     "Losses": self.losses,
     "Kills": self.kills,
@@ -228,16 +228,23 @@ class BridgeStats():
   
     return embed
 
+def today_stats(uuid):
+  json = requests.get(f"https://api.hypixel.net/player?key={CONFIG.KEY}&uuid={uuid}").json()
+  return BridgeStats.from_json(json).toEmbed()
+
 def getBridgeStatsEmbed(uuid, start_date, end_date):
   if start_date is None:
-    json = requests.get(f"https://api.hypixel.net/player?key={CONFIG.KEY}&uuid={uuid}").json()
-    return BridgeStats.from_json(json).toEmbed()
+    return today_stats(uuid)
   elif end_date is None:
     #specific date
-    date = getJSON(start_date, uuid=uuid)
-    if date is None:
+    if end_date == datetime.date.today():
+      return today_stats(uuid)
+
+    date = BridgeStats.from_json(getJSON(start_date, uuid=uuid))
+    yesterday = BridgeStats.from_json(getJSON(start_date - datetime.timedelta(days=1), uuid=uuid))
+    if date is None or yesterday is None:
       return None
-    stats = BridgeStats.from_json(date)
+    stats = date - yesterday
 
     return stats.toDateEmbed(start_date)
   else:
